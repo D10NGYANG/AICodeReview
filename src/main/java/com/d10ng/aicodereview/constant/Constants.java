@@ -12,19 +12,24 @@ import java.util.Map;
  */
 public class Constants {
 
-    public static final String NO_FILE_SELECTED = "No file selected";
+    public static final String NO_FILE_SELECTED = "未选择文件";
     public static final String GENERATING_COMMIT_MESSAGE = "Generating commit message...";
     public static final String TASK_TITLE = "Generating commit message";
+
+    public static final String GENERATING_CODE_REVIEW = "正在生成代码质量检查报告...";
+    public static final String TASK_TITLE_CODE_REVIEW = "生成代码质量检查报告";
 
     public static final String[] languages = {"English", "Chinese", "Japanese", "Korean", "French", "Spanish",
             "German", "Russian", "Arabic", "Portuguese"};
 
     public static final String PROJECT_PROMPT_FILE_NAME = "commit-prompt.txt";
+    public static final String PROJECT_CODE_REVIEW_PROMPT_FILE_NAME = "code-review-prompt.txt";
     public static final String PROJECT_PROMPT = "Project Prompt";
     public static final String CUSTOM_PROMPT = "Custom Prompt";
+    public static final String CODE_REVIEW_PROMPT = "Code Review Prompt";
 
     public static String[] getAllPromptTypes() {
-        return new String[]{PROJECT_PROMPT, CUSTOM_PROMPT};
+        return new String[]{PROJECT_PROMPT, CUSTOM_PROMPT, CODE_REVIEW_PROMPT};
     }
 
     public static final String Gemini = "Gemini";

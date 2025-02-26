@@ -11,9 +11,9 @@ import com.intellij.openapi.project.Project;
  */
 public class PromptUtil {
 
-    public static final String DEFAULT_PROMPT_1 = getDeepSeekPrompt();
-    public static final String DEFAULT_PROMPT_2 = getPrompt3();
-    public static final String DEFAULT_PROMPT_3 = getPrompt4();
+    public static final String DEFAULT_PROMPT_1 = getCodeReviewPrompt();
+    public static final String DEFAULT_PROMPT_2 = getDetailedCodeReviewPrompt();
+    public static final String DEFAULT_PROMPT_3 = getSecurityFocusedCodeReviewPrompt();
 
 
     public static String constructPrompt(Project project, String diff) {
@@ -51,165 +51,112 @@ public class PromptUtil {
         return promptContent;
     }
 
-    private static String getDeepSeekPrompt() {
+    private static String getCodeReviewPrompt() {
         return """
-                Generate a concise and standardized git commit message in {language} based on the code changes. 
-                Follow the conventional commit format, including:
-                                
-                1.Type: Use one of feat, fix, docs, style, refactor, test, chore, etc.
-                                
-                2.Scope: Specify the module or file affected (if applicable).
-                                
-                3.Subject: A short, clear description of the change (50 characters or less).
-                                
-                4.Body (optional): Provide additional context or details if necessary, but keep it brief.
-                                
-                Ensure the output is clean and does not include any unnecessary formatting (e.g., code blocks or extra symbols).
-
-                Here are the code changes:
+                你是一位经验丰富的代码审查专家。请分析以下代码变更并生成一份详细的代码质量检查报告，使用{language}语言。
+                
+                代码变更：
                 {diff}
+                
+                请在报告中包含以下内容：
+                1. 代码质量总体评估
+                2. 潜在的问题和缺陷
+                   - 逻辑错误
+                   - 性能问题
+                   - 安全漏洞
+                   - 代码风格问题
+                3. 改进建议
+                4. 代码亮点和优秀实践
+                
+                请确保报告清晰、具体，并提供有价值的反馈。
                 """;
     }
 
 
-    private static String getPrompt4() {
+    private static String getDetailedCodeReviewPrompt() {
         return
                 """
-                        You are a Git commit message generation expert. Please analyze the following code changes and generate a clear, standardized commit message in {language}.
-
-                        Code changes:
-                        {diff}
-
-                        Requirements for the commit message:
-                        1. First line should start with one of these types:
-                           feat: (new feature)
-                           fix: (bug fix)
-                           docs: (documentation)
-                           style: (formatting)
-                           refactor: (code refactoring)
-                           perf: (performance)
-                           test: (testing)
-                           chore: (maintenance)
-
-                        2. First line should be no longer than 72 characters
-
-                        3. After the first line, leave one blank line and provide detailed explanation if needed:
-                           - Why was this change necessary?
-                           - How does it address the issue?
-                           - Any breaking changes?
-
-                        4. Use present tense
-
-                        Please output only the commit message, without any additional explanations.
-                        """;
-    }
-
-    private static String getDefaultPrompt() {
-        return """
-                You are an AI assistant tasked with generating a Git commit message based on the provided code changes. Your goal is to create a clear, concise, and informative commit message that follows best practices.
-
-                Input:
-                - Code diff:
-                ```
+                作为一名资深代码审查专家，请对以下代码变更进行全面的质量评估，并使用{language}生成详细的代码审查报告。
+                
+                代码变更：
                 {diff}
-                ```
-
-                Instructions:
-                1. Analyze the provided code diff and branch name.
-                2. Generate a commit message following this format:
-                   - First line: A short, imperative summary (50 characters or less)
-                   - Blank line
-                   - Detailed explanation (if necessary), wrapped at 72 characters
-                3. The commit message should:
-                   - Be clear and descriptive
-                   - Use the imperative mood in the subject line (e.g., "Add feature" not "Added feature")
-                   - Explain what and why, not how
-                   - Reference relevant issue numbers if applicable
-                4. Avoid:
-                   - Generic messages like "Bug fix" or "Update file.txt"
-                   - Mentioning obvious details that can be seen in the diff
-
-                Output:
-                - Provide only the commit message, without any additional explanation or commentary.
-
-                Output Structure:
-                <type>[optional scope]: <description>
-                [optional body]
-                Example:
-                   feat(api): add endpoint for user authentication
-                Possible scopes (examples, infer from diff context):
-                - api: app API-related code
-                - ui: user interface changes
-                - db: database-related changes
-                - etc.
-                Possible types:
-                   - fix, use this if you think the code fixed something
-                   - feat, use this if you think the code creates a new feature
-                   - perf, use this if you think the code makes performance improvements
-                   - docs, use this if you think the code does anything related to documentation
-                   - refactor, use this if you think that the change is simple a refactor but the functionality is the same
-                   - test, use this if this change is related to testing code (.spec, .test, etc)
-                   - chore, use this for code related to maintenance tasks, build processes, or other non-user-facing changes. It typically includes tasks that don't directly impact the functionality but are necessary for the project's development and maintenance.
-                   - ci, use this if this change is for CI related stuff
-                   - revert, use this if im reverting something
-
-                Note: The whole result should be given in {language} and the final result must not contain ‘```’
+                
+                请按照以下结构组织您的代码审查报告：
+                
+                ## 1. 总体评估
+                - 代码质量评分（1-10分）
+                - 代码变更的主要目的和影响
+                - 整体设计和实现的评价
+                
+                ## 2. 详细问题分析
+                ### 2.1 功能性问题
+                - 是否正确实现了预期功能
+                - 是否存在边缘情况未处理
+                - 是否有潜在的业务逻辑错误
+                
+                ### 2.2 性能问题
+                - 是否存在性能瓶颈
+                - 是否有不必要的计算或操作
+                - 是否有可能导致内存泄漏的代码
+                
+                ### 2.3 安全问题
+                - 是否存在安全漏洞
+                - 是否有输入验证不足的情况
+                - 是否有敏感数据处理不当的问题
+                
+                ### 2.4 可维护性问题
+                - 代码结构和组织是否合理
+                - 命名和注释是否清晰
+                - 是否遵循了项目的编码规范
+                
+                ## 3. 具体改进建议
+                - 针对每个问题提供具体的改进建议
+                - 提供代码示例（如适用）
+                
+                ## 4. 代码亮点
+                - 突出代码中的优秀实践和创新点
+                
+                请确保您的评审全面、客观，并提供具体的建议以帮助改进代码质量。
                 """;
     }
 
-    private static String getPrompt3() {
+    private static String getSecurityFocusedCodeReviewPrompt() {
         return """
-                 Generate a concise yet detailed git commit message using the following format and information:
-
-                 <type>(<scope>): <subject>
-
-                 <body>
-
-                 <footer>
-
-                 Use the following placeholders in your analysis:
-                 - diff begin ：
-                 {diff}
-                 - diff end.
-
-                 Guidelines:
-
-                 1. <type>: Commit type (required)
-                    - Use standard types: feat, fix, docs, style, refactor, perf, test, chore
-
-                 2. <scope>: Area of impact (required)
-                    - Briefly mention the specific component or module affected
-
-                 3. <subject>: Short description (required)
-                    - Summarize the main change in one sentence (max 50 characters)
-                    - Use the imperative mood, e.g., "add" not "added" or "adds"
-                    - Don't capitalize the first letter
-                    - No period at the end
-
-                 4. <body>: Detailed description (required)
-                    - Explain the motivation for the change
-                    - Describe the key modifications (max 3 bullet points)
-                    - Mention any important technical details
-                    - Use the imperative mood
-
-                 5. <footer>: (optional)
-                    - Note any breaking changes
-                    - Reference related issues or PRs
-
-                 Example:
-
-                 feat(user-auth): implement two-factor authentication
-
-                 • Add QR code generation for 2FA setup
-                 • Integrate Google Authenticator API
-                 • Update user settings for 2FA options
-
-                 Notes:
-                 - Keep the entire message under 300 characters
-                 - Focus on what and why, not how
-                 - Summarize diff to highlight key changes; don't include raw diff output
-
-                Note: The whole result should be given in {language} and the final result must not contain ‘```’
+                作为一名专注于安全的代码审查专家，请对以下代码变更进行安全性和质量评估，并使用{language}生成一份详细的代码审查报告。
+                
+                代码变更：
+                {diff}
+                
+                请特别关注以下安全方面的问题：
+                
+                1. 输入验证和数据清理
+                   - 是否存在注入攻击的风险（SQL注入、XSS、命令注入等）
+                   - 是否对用户输入进行了充分的验证和清理
+                
+                2. 认证和授权
+                   - 是否正确实现了身份验证和授权检查
+                   - 是否存在权限提升的风险
+                
+                3. 敏感数据处理
+                   - 是否安全地处理和存储敏感数据
+                   - 是否使用了适当的加密方法
+                
+                4. 错误处理和日志记录
+                   - 是否泄露了敏感信息
+                   - 是否记录了足够的安全相关事件
+                
+                5. 第三方库和依赖
+                   - 是否使用了已知存在漏洞的库
+                   - 是否正确配置了第三方组件
+                
+                6. 代码质量问题
+                   - 是否存在可能导致安全问题的代码质量问题
+                   - 是否有未使用的代码或功能
+                
+                7. 具体的安全改进建议
+                   - 针对每个安全问题提供具体的修复建议
+                
+                请提供一份全面、详细的安全评估报告，帮助开发团队提高代码的安全性和质量。
                 """;
     }
 }
