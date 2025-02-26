@@ -97,13 +97,13 @@ public class ApiKeyConfigurableUI {
         // Add Report Bug link in the top right corner
         JPanel topPanel = new JPanel(new BorderLayout());
         JLabel reportBugLabel = new JLabel(
-                "<html><a href='https://github.com/HMYDK/AIGitCommit/issues'>Report Bug ↗</a></html>");
+                "<html><a href='https://github.com/D10NGYANG/AICodeReview/issues'>Report Bug ↗</a></html>");
         reportBugLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         reportBugLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                    Desktop.getDesktop().browse(new URI("https://github.com/HMYDK/AIGitCommit/issues"));
+                    Desktop.getDesktop().browse(new URI("https://github.com/D10NGYANG/AICodeReview/issues"));
                 } catch (Exception ignored) {}
             }
         });
@@ -190,13 +190,13 @@ public class ApiKeyConfigurableUI {
         labelPanel.add(infoLabel, BorderLayout.WEST);
 
         JLabel linkLabel = new JLabel(
-                "<html><a href='https://github.com/HMYDK/AIGitCommit/discussions/23'>More Prompts ↗</a></html>");
+                "<html><a href='https://github.com/D10NGYANG/AICodeReview/discussions'>More Prompts ↗</a></html>");
         linkLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         linkLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                    Desktop.getDesktop().browse(new URI("https://github.com/HMYDK/AIGitCommit/discussions/23"));
+                    Desktop.getDesktop().browse(new URI("https://github.com/D10NGYANG/AICodeReview/discussions"));
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
