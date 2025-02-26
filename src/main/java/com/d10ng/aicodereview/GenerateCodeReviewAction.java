@@ -2,12 +2,14 @@ package com.d10ng.aicodereview;
 
 import com.d10ng.aicodereview.constant.Constants;
 import com.d10ng.aicodereview.service.CodeReviewService;
+import com.d10ng.aicodereview.util.FileUtil;
 import com.d10ng.aicodereview.util.GItUtil;
 import com.d10ng.aicodereview.util.IdeaDialogUtil;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
@@ -16,9 +18,12 @@ import com.intellij.openapi.vcs.FilePath;
 import com.intellij.openapi.vcs.VcsDataKeys;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.ui.CommitMessage;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.vcs.commit.AbstractCommitWorkflowHandler;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -35,6 +40,20 @@ public class GenerateCodeReviewAction extends AnAction {
     }
 
     private final StringBuilder messageBuilder = new StringBuilder();
+
+    /**
+     * 打开文件
+     * @param project 项目
+     * @param filePath 文件路径
+     */
+    private void openFile(Project project, String filePath) {
+        ApplicationManager.getApplication().invokeLater(() -> {
+            VirtualFile virtualFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(filePath);
+            if (virtualFile != null) {
+                FileEditorManager.getInstance(project).openFile(virtualFile, true);
+            }
+        });
+    }
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
@@ -68,6 +87,19 @@ public class GenerateCodeReviewAction extends AnAction {
         }
 
         commitMessage.setCommitMessage(Constants.GENERATING_CODE_REVIEW);
+        
+        // 创建空的报告文件并打开
+        String reportFilePath = "";
+        try {
+            reportFilePath = FileUtil.writeFile(project, "# AI代码质量检查报告\n\n", Constants.CODE_REVIEW_REPORT_FILENAME);
+            final String finalReportFilePath = reportFilePath;
+            openFile(project, finalReportFilePath);
+        } catch (IOException ex) {
+            IdeaDialogUtil.showError(project, "创建代码质量检查报告文件时出错: <br>" + ex.getMessage(), "错误");
+            return;
+        }
+        
+        final String finalReportFilePath = reportFilePath;
 
         // Run the time-consuming operations in a background task
         ProgressManager.getInstance().run(new Task.Backgroundable(project, Constants.TASK_TITLE_CODE_REVIEW, true) {
@@ -82,12 +114,26 @@ public class GenerateCodeReviewAction extends AnAction {
                                 diff,
                                 // onNext 处理每个token
                                 token -> ApplicationManager.getApplication().invokeLater(() -> {
-                                    if (messageBuilder.isEmpty()) {
-                                        messageBuilder.append(token);
-                                        commitMessage.setCommitMessage(token);
-                                    } else {
-                                        messageBuilder.append(token);
-                                        commitMessage.setCommitMessage(messageBuilder.toString());
+                                    try {
+                                        // 追加内容到文件
+                                        FileUtil.appendToFile(finalReportFilePath, token);
+                                        // 刷新文件以便编辑器显示最新内容
+                                        ApplicationManager.getApplication().invokeLater(() -> {
+                                            VirtualFile virtualFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(finalReportFilePath);
+                                            if (virtualFile != null) {
+                                                virtualFile.refresh(false, false);
+                                            }
+                                        });
+                                        
+                                        // 同时更新提交消息框中的内容
+                                        if (messageBuilder.isEmpty()) {
+                                            messageBuilder.append(token);
+                                        } else {
+                                            messageBuilder.append(token);
+                                        }
+                                        commitMessage.setCommitMessage("正在生成代码质量检查报告，请查看已打开的文件: " + finalReportFilePath);
+                                    } catch (IOException ex) {
+                                        IdeaDialogUtil.showError(project, "更新代码质量检查报告文件时出错: <br>" + ex.getMessage(), "错误");
                                     }
                                 }),
                                 // onError 处理错误
@@ -95,10 +141,31 @@ public class GenerateCodeReviewAction extends AnAction {
                                     IdeaDialogUtil.showError(project, "生成代码质量检查报告时出错: <br>" + getErrorMessage(error.getMessage()), "错误");
                                 })
                         );
+                        
+                        // 生成完成后，更新提交消息
+                        ApplicationManager.getApplication().invokeLater(() -> {
+                            commitMessage.setCommitMessage("代码质量检查报告已生成，文件路径：" + finalReportFilePath);
+                        });
                     } else {
+                        // 非流式生成的情况
                         String codeReviewFromAi = codeReviewService.generateCodeReview(project, diff).trim();
                         ApplicationManager.getApplication().invokeLater(() -> {
-                            commitMessage.setCommitMessage(codeReviewFromAi);
+                            try {
+                                // 清空文件并写入完整内容
+                                FileUtil.clearFile(finalReportFilePath);
+                                FileUtil.appendToFile(finalReportFilePath, codeReviewFromAi);
+                                // 刷新文件
+                                ApplicationManager.getApplication().invokeLater(() -> {
+                                    VirtualFile virtualFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(finalReportFilePath);
+                                    if (virtualFile != null) {
+                                        virtualFile.refresh(false, false);
+                                    }
+                                });
+                                commitMessage.setCommitMessage("代码质量检查报告已生成，文件路径：" + finalReportFilePath);
+                            } catch (IOException ex) {
+                                IdeaDialogUtil.showError(project, "写入代码质量检查报告文件时出错: <br>" + ex.getMessage(), "错误");
+                                commitMessage.setCommitMessage(codeReviewFromAi);
+                            }
                         });
                     }
                 } catch (IllegalArgumentException ex) {

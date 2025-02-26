@@ -18,6 +18,7 @@ public class Constants {
 
     public static final String GENERATING_CODE_REVIEW = "正在生成代码质量检查报告...";
     public static final String TASK_TITLE_CODE_REVIEW = "生成代码质量检查报告";
+    public static final String CODE_REVIEW_REPORT_FILENAME = "code-review-report.md";
 
     public static final String[] languages = {"English", "Chinese", "Japanese", "Korean", "French", "Spanish",
             "German", "Russian", "Arabic", "Portuguese"};
