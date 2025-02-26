@@ -1,8 +1,8 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>com.hmydk.aigit</id>
+    <id>com.d10ng.aicodereview</id>
 
-    <name>AI Git Commit</name>
+    <name>AICodeReview</name>
 
     <vendor email="paranoia_zk@yeah.net">HMYDK</vendor>
 
@@ -52,22 +52,20 @@
      Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
         <!-- 注册欢迎通知活动 -->
-        <postStartupActivity implementation="com.hmydk.aigit.WelcomeNotification"/>
+        <postStartupActivity implementation="com.d10ng.aicodereview.WelcomeNotification"/>
         <!-- 声明通知组 -->
-        <notificationGroup id="AI Git Commit Notifications" displayType="BALLOON"/>
-        <!--        <applicationConfigurable instance="com.hmydk.aigit.config.ApiKeyConfigurable"-->
-        <!--            displayName="AI Git Commit"/>-->
-        <applicationConfigurable instance="com.hmydk.aigit.config.ApiKeyConfigurable"
-                                 id="aigit.settings"
-                                 displayName="AI Git Commit"
+        <notificationGroup id="AI Code Review Notifications" displayType="BALLOON"/>
+        <applicationConfigurable instance="com.d10ng.aicodereview.config.ApiKeyConfigurable"
+                                 id="aicodereview.settings"
+                                 displayName="AI Code Review"
                                  groupId="Tools"/>
-        <applicationService serviceImplementation="com.hmydk.aigit.config.ApiKeySettings"/>
+        <applicationService serviceImplementation="com.d10ng.aicodereview.config.ApiKeySettings"/>
     </extensions>
 
     <actions>
         <!-- Declare the action for manual commit message generation -->
         <action id="AICommitMessage.Generate"
-                class="com.hmydk.aigit.GenerateCommitMessageAction"
+                class="com.d10ng.aicodereview.GenerateCommitMessageAction"
                 text="Generate AI Commit Message"
                 icon="/icons/git-commit-logo.svg"
                 description="Generate a commit message using AI">
