@@ -1,21 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+<svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
         <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#2ecc71;stop-opacity:1" />
+            <stop offset="0%" style="stop-color:#2196F3;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#00BCD4;stop-opacity:1" />
         </linearGradient>
     </defs>
 
     <!-- 背景 -->
     <rect x="0" y="0" width="100" height="100" rx="20" ry="20" fill="url(#grad)" />
 
-    <!-- 字母 A，同时暗示 Git 分支 -->
-    <path d="M25 75 L50 25 L75 75" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
-    <line x1="37.5" y1="50" x2="62.5" y2="50" stroke="white" stroke-width="8" stroke-linecap="round" />
+    <!-- 简化的代码括号 < > -->
+    <path d="M35 35 L25 50 L35 65" fill="none" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M65 35 L75 50 L65 65" fill="none" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
 
-    <!-- 字母 I，同时作为 Git 主干 -->
-    <line x1="50" y1="25" x2="50" y2="75" stroke="white" stroke-width="8" stroke-linecap="round" />
-
-    <!-- 代表消息的圆点 -->
-    <circle cx="50" cy="75" r="6" fill="white" />
+    <!-- 检查标记 -->
+    <path d="M40 50 L48 58 L60 42" fill="none" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
 </svg>
