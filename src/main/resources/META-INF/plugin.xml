@@ -11,9 +11,35 @@
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description>
     <![CDATA[
+    <h3>This plugin uses AI to automatically generate code quality review reports, helping you improve code quality.</h3>
+    
+    <h3>Supported Models:</h3>
+    <ul>
+        <li>OpenAI API</li>
+        <li>Gemini</li>
+        <li>DeepSeek</li>
+        <li>Ollama</li>
+        <li>Cloudflare Workers AI</li>
+        <li>Alibaba Cloud Model Hub</li>
+        <li>SiliconFlow (Model Hub)</li>
+    </ul>
+
+    <h3>How to Use:</h3>
+    <ul>
+        <li>Select the code files you want to review</li>
+        <li>Click the "Generate AI Code Quality Review Report" button</li>
+        <li>The generated code quality review report will be displayed in the commit message editor</li>
+    </ul>
+
+    <h3>Custom Prompts:</h3>
+    <ul>
+        <li>You can add, edit, and delete custom prompts in settings</li>
+        <li>Custom prompts will be used to generate code quality review reports</li>
+        <li>You can share and find more information about custom prompts in the <a href="https://github.com/D10NGYANG/AICodeReview/discussions">discussions</a></li>
+    </ul>
+
     <h3>这个插件使用AI自动生成代码质量检查报告，帮助您提高代码质量。</h3>
     
-
     <h3>支持的模型：</h3>
     <ul>
         <li>支持OpenAI API</li>
